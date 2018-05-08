@@ -36,7 +36,7 @@ while($row = $qToplistall->fetch_object()) {
 $toplistall .= "</table>";
 echo "done. writing to file...\r\n";
 
-file_put_contents("/var/www/pxls.space/stats/basicstats.json",json_encode($stats));
+file_put_contents(dirname(__FILE__)."/basicstats.json",json_encode($stats));
 file_put_contents(dirname(__FILE__)."/topstats.html",$toplist);
 file_put_contents(dirname(__FILE__)."/topstatsall.html",$toplistall);
 
