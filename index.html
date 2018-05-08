@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>pxls.space Statistics</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" title="style" />
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <div id="logo_text">
+          <!-- class="logo_colour", allows you to change the colour of the text -->
+          <h1><a href="/">pxls.<span class="logo_colour">space</span></a></h1>
+	  <h2>statistics for nerds. hi there!</h2>
+        </div>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <li class="selected"><a href="/">Stats</a></li>
+          <li><a href="//pxls.space">Back to pxls.space</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="site_content">
+      <div class="sidebar">
+       <h3>Explanation</h3>
+       <h5>something<i>_mod</i></h5><p>If a variable name contains _mod, moderators / administrators have been included in this value. </p>
+       <h5>last_updated</h5><p>the statistics are automatically updated every hour. Timezone: Europe/Berlin - CEST</p>
+      </div>
+      <div id="content">
+         <h3>basic stats</h3>
+         <div id="basic"></div>
+         <h3>most pixels placed (top10, without mod actions)</h3>
+         <div id="top10"></div>
+         <h3>most pixels placed all-time</h3>
+         <div id="top10all"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="//gitcdn.xyz/cdn/dorey/jQuery-json2table/master/json2table.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$("#basic").load("basicstats.json",function(){
+		$("#basic").html($.json2table($.parseJSON($("#basic").html()),"pxls.space"));
+	});
+
+	$("#top10").load("topstats.html");
+	$("#top10all").load("topstatsall.html");
+
+	console.log("%c" + fox(),"background: -webkit-linear-gradient(#632705,#b75800,#632705);  -webkit-background-clip: text; color:transparent; font-size:16px;display: inline-block;");
+});
+
+function fox() {
+  var fox = "                                                                   ,-,\n" +
+  "                                                             _.-=;~ /_\n" +
+  "                                                          _-~   '     ;.\n" +
+  "                                                      _.-~     '   .-~-~`-._\n" +
+  "                                                _.--~~:.             --.____88\n" +
+  "                              ____.........--~~~. .' .  .        _..-------~~\n" +
+  "                     _..--~~~~               .' .'             ,'\n" +
+  "                 _.-~                        .       .     ` ,'\n" +
+  "               .'                                    :.    ./\n" +
+  "             .:     ,/          `                   ::.   ,'\n" +
+  "           .:'     ,(            ;.                ::. ,-'\n" +
+  "          .'     ./'.`.     . . /:::._______.... _/:.o/\n" +
+  "         /     ./'. . .)  . _.,'               `88;?88|\n" +
+  "       ,'  . .,/'._,-~ /_.o8P'                  88P ?8b\n" +
+  "    _,'' . .,/',-~    d888P'                    88'  88|\n" +
+  " _.'~  . .,:oP'        ?88b              _..--- 88.--'8b.--..__\n" +
+  ":     ...' 88o __,------.88o ...__..._.=~- .    `~~   `~~      ~-.________.\n" +
+  "`.;;;:='    ~~            ~~~                ~-    -       -   -\n";
+  return fox;
+}
+</script>
+</body>
+</html>
