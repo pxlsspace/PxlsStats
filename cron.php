@@ -21,15 +21,15 @@ $stats["total_pixels_placed_mod"]	= $con->query("SELECT COUNT(id) AS total FROM 
 $stats["most_pixels_placed"]		= $con->query("SELECT username, pixel_count AS pxlcount FROM users ORDER BY pixel_count DESC LIMIT 1;")->fetch_object();
 $stats["most_pixel_placed_mod"]		= $con->query("SELECT COUNT(*) AS pxlcount, users.username AS user FROM pixels LEFT JOIN users ON pixels.who = users.id WHERE rollback_action = 0 AND undo_action = 0 GROUP BY WHO ORDER BY COUNT(*) DESC LIMIT 1;")->fetch_object();
 $stats["last_updated"]		= '"'.date("Y/m/d - H:i:s").'"';
-echo "done. grabbing top10 users...\r\n";
+echo "done. grabbing top placed lists...\r\n";
 $toplist = "<table style=\"width:100%;\"><tr><th>pxlcount</th><th>username</th></tr>";
-$qToplist = $con->query("SELECT username, pixel_count FROM users ORDER BY pixel_count DESC LIMIT 10;");
+$qToplist = $con->query("SELECT username, pixel_count FROM users ORDER BY pixel_count DESC LIMIT 50;");
 while($row = $qToplist->fetch_object()) {
 	$toplist .= "<tr><td>".$row->pixel_count."</td><td>".$row->username."</td></tr>";
 }
 $toplist .= "</table>";
 $toplistall = "<table style=\"width:100%;\"><tr><th>pxlcount</th><th>username</th></tr>";
-$qToplistall = $con->query("SELECT username, pixel_count_alltime FROM users ORDER BY pixel_count_alltime DESC LIMIT 10;");
+$qToplistall = $con->query("SELECT username, pixel_count_alltime FROM users ORDER BY pixel_count_alltime DESC LIMIT 50;");
 while($row = $qToplistall->fetch_object()) {
 	$toplistall .= "<tr><td>".$row->pixel_count_alltime."</td><td>".$row->username."</td></tr>";
 }
