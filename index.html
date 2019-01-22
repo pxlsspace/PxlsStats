@@ -1,84 +1,104 @@
-<!DOCTYPE HTML>
-<html>
-
-<head>
-  <title>pxls.space Statistics</title>
-  <meta name="description" content="website description" />
-  <meta name="keywords" content="website keywords, website keywords" />
-  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
-  <link rel="stylesheet" type="text/css" href="style/style.css" title="style" />
-</head>
-
-<body>
-  <div id="main">
-    <div id="header">
-      <div id="logo">
-        <div id="logo_text">
-          <!-- class="logo_colour", allows you to change the colour of the text -->
-          <h1><a href="/">pxls.<span class="logo_colour">space</span></a></h1>
-          <h2>statistics for nerds. hi there!</h2>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Pxls.space Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="style/overrides.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="https://pxls.space/">Pxls.space</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="https://pxls.space/">Home</a>
+        </li>
+      </ul>
+    </nav>
+    <main role="main" class="container">
+      <div class="container card no-extra-bottom-padding">
+        <h2>General Stats</h2>
+        <hr />
+        <p id="lastUpdated">Last updated: <em class="gscLoading">(still loading)</em></p>
+        <div class="row">
+          <div class="col-md-12">
+              <div class="card-body">
+                <table id="tblGeneralStats" class="table table-bordered table-hover table-shrink">
+                  <thead>
+                    <tr>
+                      <th>Statistic Name</th>
+                      <th>Statistic Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Total Users</td>
+                      <td id="tdGeneralTotalUsers"> <em class="gscLoading">(LOADING)</em></td>
+                    </tr>
+                    <tr>
+                      <td>Total Pixels Placed</td>
+                      <td id="tdGeneralTotalPixelsPlaced"> <em class="gscLoading">(LOADING)</em></td>
+                    </tr>
+                    <tr>
+                      <td>Users Active This Canvas</td>
+                      <td id="tdGeneralUsersActiveCanvas"> <em class="gscLoading">(LOADING)</em></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+          </div>
         </div>
       </div>
-      <div id="menubar">
-        <ul id="menu">
-          <li class="selected"><a href="/">Stats</a></li>
-          <li><a href="//pxls.space">Back to pxls.space</a></li>
-        </ul>
+      <div class="container card">
+        <h2>Leaderboard</h2>
+        <hr />
+        <div class="row">
+          <div class="col-md-6">
+            <div class="gscWrapper">
+              <h5 class="card-title">Current canvas <em class="gscLoading">(LOADING)</em> <br/><button class="btn btn-link btn-sm btn-standing-jump" id="thisCanvasStanding" style="display: none;">Jump to me</button></h5>
+              <table id="tblToplistCurrent" class="table table-striped table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Place</th>
+                    <th>Username</th>
+                    <th>Pixels</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="gscWrapper">
+              <h5 class="card-title">Top 1000 all-time <em class="gscLoading">(LOADING)</em> <br/><button class="btn btn-link btn-sm btn-standing-jump" id="alltimeStanding" style="display: none;">Jump to me</button></h5>
+              <table id="tblToplistAlltime" class="table table-striped table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Place</th>
+                    <th>Username</th>
+                    <th>Pixels</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="site_content">
-      <div class="sidebar">
-       <h3>Explanation</h3>
-       <h5>something<i>_mod</i></h5><p>If a variable name contains _mod, moderators / administrators have been included in this value. </p>
-       <h5>last_updated</h5><p>the statistics are automatically updated every 15 minutes. Timezone: Europe/Berlin - CEST</p>
+      <div class="container card breakdownContainer" id="breakdowns">
+        <h2>TimeSlice Breakdowns</h2>
+        <hr />
       </div>
-      <div id="content">
-         <h3>basic stats</h3>
-         <div id="basic"></div>
-         <h3>Most pixels placed (current canvas)</h3>
-         <div id="top10"></div>
-         <h3>Most pixels placed (all-time)</h3>
-         <div id="top10all"></div>
-      </div>
-    </div>
-  </div>
-</div>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="//gitcdn.xyz/cdn/dorey/jQuery-json2table/master/json2table.js"></script>
-<script type="text/javascript">
-
-$(document).ready(function() {
-	$("#basic").load("basicstats.json",function(){
-		$("#basic").html($.json2table($.parseJSON($("#basic").html()),"pxls.space"));
-	});
-
-	$("#top10").load("topstats.html");
-	$("#top10all").load("topstatsall.html");
-
-	console.log("%c" + fox(),"background: -webkit-linear-gradient(#632705,#b75800,#632705);  -webkit-background-clip: text; color:transparent; font-size:16px;display: inline-block;");
-});
-
-function fox() {
-  var fox = "                                                                   ,-,\n" +
-  "                                                             _.-=;~ /_\n" +
-  "                                                          _-~   '     ;.\n" +
-  "                                                      _.-~     '   .-~-~`-._\n" +
-  "                                                _.--~~:.             --.____88\n" +
-  "                              ____.........--~~~. .' .  .        _..-------~~\n" +
-  "                     _..--~~~~               .' .'             ,'\n" +
-  "                 _.-~                        .       .     ` ,'\n" +
-  "               .'                                    :.    ./\n" +
-  "             .:     ,/          `                   ::.   ,'\n" +
-  "           .:'     ,(            ;.                ::. ,-'\n" +
-  "          .'     ./'.`.     . . /:::._______.... _/:.o/\n" +
-  "         /     ./'. . .)  . _.,'               `88;?88|\n" +
-  "       ,'  . .,/'._,-~ /_.o8P'                  88P ?8b\n" +
-  "    _,'' . .,/',-~    d888P'                    88'  88|\n" +
-  " _.'~  . .,:oP'        ?88b              _..--- 88.--'8b.--..__\n" +
-  ":     ...' 88o __,------.88o ...__..._.=~- .    `~~   `~~      ~-.________.\n" +
-  "`.;;;:='    ~~            ~~~                ~-    -       -   -\n";
-  return fox;
-}
-</script>
-</body>
+    </main>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="main.js"></script>
+  </body>
 </html>
