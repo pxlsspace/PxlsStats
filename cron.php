@@ -23,7 +23,7 @@
         "general" => [
             "total_users" => $con->query("SELECT COUNT(id) AS total FROM users;")->fetch_object()->total,
             "total_pixels_placed" => $con->query("SELECT COUNT(id) AS total FROM pixels WHERE mod_action = 0 AND rollback_action = 0 AND undo_action = 0;")->fetch_object()->total,
-            "users_active_this_canvas" => $con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0;")->fetch_object()->total
+            "users_active_this_canvas" => $con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry));")->fetch_object()->total
         ],
         "breakdown" => [
             "last15m" => [],
@@ -46,7 +46,7 @@
     $stats["breakdown"]["lastWeek"] = handlePixelsBreakdown($con, 604800);
 
     echo "    Grabbing leaderboard stats...\n";
-    $qToplistall = $con->query("SELECT username, pixel_count_alltime AS pixels FROM users WHERE pixel_count_alltime > 0 ORDER BY pixel_count_alltime DESC LIMIT 1000;");
+    $qToplistall = $con->query("SELECT username, pixel_count_alltime AS pixels FROM users WHERE pixel_count_alltime > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
     $i = 1;
     while($row = $qToplistall->fetch_object()) {
         $row->place = $i++;
@@ -54,7 +54,7 @@
         $stats["toplist"]["alltime"][] = $row;
     }
 
-    $qToplistCanvas = $con->query("SELECT username, pixel_count AS pixels FROM users WHERE pixel_count > 0 ORDER BY pixel_count DESC;");
+    $qToplistCanvas = $con->query("SELECT username, pixel_count AS pixels FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count DESC;");
     $i = 1;
     while($row = $qToplistCanvas->fetch_object()) {
         $row->place = $i++;
@@ -71,7 +71,7 @@
     file_put_contents($outFile, json_encode($stats));
     echo "Job done.\n\n";
     function handlePixelsBreakdown($con, $q) {
-        $query = $con->query("SELECT p.x,p.y,p.color,p.who AS 'uid', u.username AS 'username' FROM pixels p INNER JOIN users u ON p.who=u.id WHERE unix_timestamp()-unix_timestamp(p.time) <= ".intval($q).";");
+        $query = $con->query("SELECT p.x,p.y,p.color,p.who AS 'uid', u.username AS 'username' FROM pixels p INNER JOIN users u ON p.who=u.id WHERE unix_timestamp()-unix_timestamp(p.time) <= ".intval($q)." AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < ban_expiry));");
         $bdTemp = [
             "colors" => [],
             "users" => [],
