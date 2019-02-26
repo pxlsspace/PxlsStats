@@ -88,13 +88,15 @@ $(document).ready(function() {
                 let node = tblToplistCurrent.row(function(idx, rowData) {
                     return rowData.username == data.authData.username;
                 }).node();
-                $("#tblToplistCurrent").closest(".dataTables_scrollBody").scrollTo(node);
+                const scrollBody = $("#tblToplistCurrent").closest(".dataTables_scrollBody");
+                scrollBody.scrollTo(node, {offset: -Math.abs((scrollBody[0].getBoundingClientRect().height / 2) - (node.getBoundingClientRect().height / 2))});
             });
             $(alltimeStanding).click(() => {
                 let node = tblToplistAlltime.row(function(idx, rowData) {
                     return rowData.username == data.authData.username;
                 }).node();
-                $("#tblToplistAlltime").closest(".dataTables_scrollBody").scrollTo(node);
+                const scrollBody = $("#tblToplistAlltime").closest(".dataTables_scrollBody");
+                scrollBody.scrollTo(node, {offset: -Math.abs((scrollBody[0].getBoundingClientRect().height / 2) - (node.getBoundingClientRect().height / 2))});
             });
         } else {
             alltimeStanding.style.display = "none";
