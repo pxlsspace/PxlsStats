@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     $.get("stats.json", statsData => {
         try {
@@ -32,6 +31,7 @@ $(document).ready(function() {
     });
 
     function handleTables(data) {
+        console.log(data);
         var leaderboardColumns = [
             {data: "place", searchable: false},
             {data: "username"},
@@ -74,6 +74,19 @@ $(document).ready(function() {
         document.getElementById("tdGeneralUsersActiveCanvas").textContent = data.general.users_active_this_canvas >> 0;
         document.getElementById("tdGeneralTotalPixelsPlaced").textContent = data.general.total_pixels_placed >> 0;
         document.getElementById("lastUpdated").textContent = `Last updated: ${data.generatedAt}`;
+        if (data.general.nth_list) {
+            let generalTbody = document.getElementById('tblGeneralStats').querySelector('tbody');
+            data.general.nth_list.forEach(x => {
+                if (x.res !== false) {
+                    let tr = _ce("tr"),
+                        tdName = _ce("td", `${x.pretty} pixel placed by`),
+                        tdValue = _ce("td", x.res);
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdValue);
+                    generalTbody.appendChild(tr);
+                }
+            });
+        } else console.log('no nth_list: %o', data);
 
         $(".card-title").addClass("pull-down").css("z-index", "9669");
         $(".gscWrapper").addClass("pulled");
