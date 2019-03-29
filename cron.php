@@ -166,7 +166,7 @@
         }
 
         private function grabNthPixel($Nth) {
-            $query = $this->con->query("SELECT * FROM pixels WHERE mod_action=0 AND rollback_action=0 AND undo_action=0 ORDER BY id LIMIT $Nth,1;");
+            $query = $this->con->query("SELECT * FROM pixels WHERE mod_action=0 AND rollback_action=0 AND undo_action=0 AND undone=0 ORDER BY id LIMIT $Nth,1;");
             $res = $query->fetch_object();
             if ($res == null) return false;
             return $this->getUsernameFromID($res->who);
