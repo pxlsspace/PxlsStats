@@ -43,6 +43,8 @@
                         $this->generateNth(1),
                         $this->generateNth(100),
                         $this->generateNth(1000),
+                        $this->generateNth(15000),
+                        $this->generateNth(25000),
                         $this->generateNth(500000),
                         $this->generateNth(1000000),
                         $this->generateNth(2000000),
@@ -118,7 +120,7 @@
             arsort($bdTemp["colors"]);
             $users = [];
             $i = 1;
-            foreach (array_slice($bdTemp["users"], 0, 5, true) as $key => $value) {
+            foreach (array_slice($bdTemp["users"], 0, 10, true) as $key => $value) {
                 if (substr($bdTemp["loginMap"][$key], 0, 2) == "ip") {
                     $key = "-snip-";
                 }
@@ -131,7 +133,7 @@
 
             $colors = [];
             $i = 1;
-            foreach(array_slice($bdTemp["colors"], 0, 5, true) as $key => $value) {
+            foreach(array_slice($bdTemp["colors"], 0, 10, true) as $key => $value) {
                 $colors[] = [
                     "colorID" => $key,
                     "count" => $value,

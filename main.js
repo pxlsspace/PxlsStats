@@ -125,8 +125,8 @@ $(document).ready(function() {
             groupHolder = _ce("div", {class: "row justify-content-between"}),
             groupTopUsers = _ce("div", {class: "col-md-6"}),
             groupTopColors = _ce("div", {class: "col-md-6"});
-        groupTopUsers.appendChild(_ce("h6", "Top 5 users"));
-        groupTopColors.appendChild(_ce("h6", "Top 5 colors"));
+        groupTopUsers.appendChild(_ce("h6", "Top 10 users"));
+        groupTopColors.appendChild(_ce("h6", "Top 10 colors"));
         wrapper.appendChild(header);
 
         {
