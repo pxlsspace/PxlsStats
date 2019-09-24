@@ -45,12 +45,20 @@
                         $this->generateNth(1000),
                         $this->generateNth(15000),
                         $this->generateNth(25000),
+                        $this->generateNth(100000),
+                        $this->generateNth(250000),
                         $this->generateNth(500000),
+                        $this->generateNth(750000),
                         $this->generateNth(1000000),
+                        $this->generateNth(1500000),
                         $this->generateNth(2000000),
+                        $this->generateNth(2500000),
                         $this->generateNth(3000000),
+                        $this->generateNth(3500000),
                         $this->generateNth(4000000),
-                        $this->generateNth(5000000)
+                        $this->generateNth(4500000),
+                        $this->generateNth(5000000),
+                        $this->generateNth(5500000)
                     ]
                 ],
                 "breakdown" => [

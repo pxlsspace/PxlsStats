@@ -118,7 +118,7 @@ $(document).ready(function() {
         $(".gscLoading").remove();
     }
 
-    function generateBreakdownSection(headerString, data, board_info, auth_data) {
+    function generateBreakdownSection(headerString, data, board_info, auth_data, zero_based_colors=true) {
         let
             wrapper = _ce("div", {class: "breakdown"}),
             header = _ce("h4", {class: "text-center"}, headerString),
@@ -173,20 +173,22 @@ $(document).ready(function() {
             table.appendChild(tbody);
             table.appendChild(tfoot);
 
-            $(table).DataTable({
-                data: data.colors,
-                columns: [
-                    {data: "place"},
-                    {
-                        data: "colorID", render: function(renderData, type, row, meta) {
-                            return `<div class="pixelColor" style="background-color:${board_info.palette[renderData]}"></div> ${renderData + 1}`;
-                        }
-                    },
-                    {data: "count"}
-                ],
-                searching: false,
-                paging: false
-            });
+            (zero_based_colors => {
+                $(table).DataTable({
+                    data: data.colors,
+                    columns: [
+                        {data: "place"},
+                        {
+                            data: "colorID", render: function(renderData, type, row, meta) {
+                                return `<div class="pixelColor" style="background-color:${board_info.palette[renderData]}"></div> ${renderData + (zero_based_colors ? 0 : 1)}`;
+                            }
+                        },
+                        {data: "count"}
+                    ],
+                    searching: false,
+                    paging: false
+                });
+            })(zero_based_colors);
 
             groupTopColors.appendChild(table);
         }
