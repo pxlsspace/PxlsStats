@@ -89,7 +89,7 @@
                 $toRet["toplist"]["alltime"][] = $row;
             }
 
-            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count DESC;");
+            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistCanvas->fetch_object()) {
                 $this->filterUsernameInRow($row);
