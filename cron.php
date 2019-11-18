@@ -9,13 +9,14 @@
         private $con;
 
         public function __construct($dbHost, $dbUser, $dbPassword, $dbDatabase) {
-            $this->con = new mysqli($dbHost, $dbUser, $dbPassword, $dbDatabase);
-            if ($this->con->connect_error) throw new Error('Failed to connect to the MySQL Database');
+            $con_str = "pgsql:host=$dbHost dbname=$dbDatabase";
+            $this->con = new PDO($con_str, $dbUser, $dbPassword);
+            if (!$this->con) throw new Error('Failed to connect to the MySQL Database');
         }
 
         public function __destruct() {
             try {
-                $this->con->close();
+                $this->con = null;
             } catch (Exception $e) {
                 //
             }
@@ -36,9 +37,9 @@
             echo "    Grabbing general stats...\n";
             $toRet = [
                 "general" => [
-                    "total_users" => $this->con->query("SELECT COUNT(id) AS total FROM users;")->fetch_object()->total,
-                    "total_pixels_placed" => $this->con->query("SELECT COUNT(id) AS total FROM pixels WHERE mod_action = 0 AND rollback_action = 0 AND undo_action = 0 AND undone = 0;")->fetch_object()->total,
-                    "users_active_this_canvas" => $this->con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry));")->fetch_object()->total,
+                    "total_users" => $this->con->query("SELECT COUNT(id) AS total FROM users;")->fetch()['total'],
+                    "total_pixels_placed" => $this->con->query("SELECT COUNT(id) AS total FROM pixels WHERE mod_action = false AND rollback_action = false AND undo_action = false AND undone = false;")->fetch()['total'],
+                    "users_active_this_canvas" => $this->con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry));")->fetch()['total'],
                     "nth_list" => [
                         $this->generateNth(1),
                         $this->generateNth(100),
@@ -82,19 +83,19 @@
             echo "    Grabbing leaderboard stats...\n";
             $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login FROM users WHERE pixel_count_alltime > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
             $i = 1;
-            while($row = $qToplistall->fetch_object()) {
+            while($row = $qToplistall->fetch()) {
                 $this->filterUsernameInRow($row);
-                $row->place = $i++;
-                $row->pixels = intval($row->pixels);
+                $row['place'] = $i++;
+                $row['pixels'] = intval($row['pixels']);
                 $toRet["toplist"]["alltime"][] = $row;
             }
 
             $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count DESC LIMIT 1000;");
             $i = 1;
-            while($row = $qToplistCanvas->fetch_object()) {
+            while($row = $qToplistCanvas->fetch()) {
                 $this->filterUsernameInRow($row);
-                $row->place = $i++;
-                $row->pixels = intval($row->pixels);
+                $row['place'] = $i++;
+                $row['pixels'] = intval($row['pixels']);
                 $toRet["toplist"]["canvas"][] = $row;
             }
 
@@ -106,23 +107,23 @@
         }
 
         private function getBreakdownForTime($time) {
-            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS 'uid', u.username AS 'username', u.login as 'login' FROM pixels p INNER JOIN users u ON p.who=u.id WHERE unix_timestamp()-unix_timestamp(p.time) <= ".intval($time)." AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < ban_expiry));");
+            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE EXTRACT(epoch FROM CURRENT_TIMESTAMP)::INTEGER - EXTRACT(epoch FROM p.time)::INTEGER <= ".intval($time)." AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < u.ban_expiry));");
             $bdTemp = [
                 "colors" => [],
                 "users" => [],
                 "temp" => [],
                 "loginMap" => []
             ];
-            while ($row = $query->fetch_object()) {
-                if (!array_key_exists($row->username, $bdTemp["users"])) {
-                    $bdTemp["users"][$row->username] = 0;
-                    $bdTemp["loginMap"][$row->username] = $row->login;
+            while ($row = $query->fetch()) {
+                if (!array_key_exists($row['username'], $bdTemp["users"])) {
+                    $bdTemp["users"][$row['username']] = 0;
+                    $bdTemp["loginMap"][$row['username']] = $row['login'];
                 }
-                if (!array_key_exists($row->color, $bdTemp["colors"])) {
-                    $bdTemp["colors"][$row->color] = 0;
+                if (!array_key_exists($row['color'], $bdTemp["colors"])) {
+                    $bdTemp["colors"][$row['color']] = 0;
                 }
-                ++$bdTemp["users"][$row->username];
-                ++$bdTemp["colors"][$row->color];
+                ++$bdTemp["users"][$row['username']];
+                ++$bdTemp["colors"][$row['color']];
             }
             arsort($bdTemp["users"]);
             arsort($bdTemp["colors"]);
@@ -177,26 +178,25 @@
 
         private function grabNthPixel($Nth) {
             $query = $this->con->query("SELECT * FROM pixels WHERE mod_action=0 AND rollback_action=0 AND undo_action=0 AND undone=0 ORDER BY id LIMIT $Nth,1;");
-            $res = $query->fetch_object();
-            if ($res == null) return false;
+            if (!$query) return false;
             return $this->getUsernameFromID($res->who);
         }
 
         private function getUsernameFromID($id) {
-            $row = $this->con->query("SELECT username,login FROM users WHERE id=$id LIMIT 1;")->fetch_object();
-            if (substr($row->login, 0, 2) == "ip") {
-                $row->username = "-snip-";
+            $row = $this->con->query("SELECT username,login FROM users WHERE id=$id LIMIT 1;");
+            if (substr($row['login'], 0, 2) == "ip") {
+                $row['username'] = "-snip-";
             }
-            return $row->username;
+            return $row['username'];
         }
 
         private function filterUsernameInRow(&$row) {
-            if (isset($row->login)) {
-                if (substr($row->login, 0, 2) == "ip") {
-                    $row->username = "-snip-";
+            if (isset($row['login'])) {
+                if (substr($row['login'], 0, 2) == "ip") {
+                    $row['username'] = "-snip-";
                 }
-                $row->login = null;
-                unset($row->login);
+                $row['login'] = null;
+                unset($row['login']);
             }
         }
     }
