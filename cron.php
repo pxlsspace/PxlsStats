@@ -84,6 +84,8 @@
             $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login FROM users WHERE pixel_count_alltime > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistall->fetch()) {
+                // TODO: Find out why the row includes numbered results
+                unset($row[0], $row[1], $row[2]);
                 $this->filterUsernameInRow($row);
                 $row['place'] = $i++;
                 $row['pixels'] = intval($row['pixels']);
@@ -93,6 +95,8 @@
             $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry)) ORDER BY pixel_count DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistCanvas->fetch()) {
+                // TODO: Find out why the row includes numbered results
+                unset($row[0], $row[1], $row[2]);
                 $this->filterUsernameInRow($row);
                 $row['place'] = $i++;
                 $row['pixels'] = intval($row['pixels']);
