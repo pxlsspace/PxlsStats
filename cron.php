@@ -111,7 +111,7 @@
         }
 
         private function getBreakdownForTime($time) {
-            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE EXTRACT(epoch FROM CURRENT_TIMESTAMP)::INTEGER - EXTRACT(epoch FROM p.time)::INTEGER <= ".intval($time)." AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < u.ban_expiry AND u.ban_expiry IS NOT NULL));");
+            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE p.time BETWEEN (current_timestamp - interval '".$time." seconds') AND (current_timestamp) AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < u.ban_expiry AND u.ban_expiry IS NOT NULL));");
             $bdTemp = [
                 "colors" => [],
                 "users" => [],
