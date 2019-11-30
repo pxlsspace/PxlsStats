@@ -183,11 +183,13 @@
         private function grabNthPixel($Nth) {
             $query = $this->con->query("SELECT * FROM pixels WHERE mod_action=false AND rollback_action=false AND undo_action=false AND undone=false ORDER BY id LIMIT 1 OFFSET $Nth;");
             if (!$query) return false;
-            return $this->getUsernameFromID($query['who']);
+            return $this->getUsernameFromID($query->fetch()['who']);
         }
 
         private function getUsernameFromID($id) {
             $row = $this->con->query("SELECT username,login FROM users WHERE id=$id LIMIT 1;");
+            if (!$row) return false;
+            $row = $row->fetch();
             if (substr($row['login'], 0, 2) == "ip") {
                 $row['username'] = "-snip-";
             }
