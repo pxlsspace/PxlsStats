@@ -187,6 +187,9 @@
         }
 
         private function getUsernameFromID($id) {
+            if (empty($id)) {
+                return '-unknown username-';
+            }
             $row = $this->con->query("SELECT username,login FROM users WHERE id=$id LIMIT 1;");
             if (!$row) return false;
             $row = $row->fetch();
