@@ -73,20 +73,48 @@ $(document).ready(function() {
         document.getElementById("tdGeneralTotalUsers").textContent = data.general.total_users >> 0;
         document.getElementById("tdGeneralUsersActiveCanvas").textContent = data.general.users_active_this_canvas >> 0;
         document.getElementById("tdGeneralTotalPixelsPlaced").textContent = data.general.total_pixels_placed >> 0;
+        document.getElementById("tdGeneralTotalFactions").textContent = data.general.total_factions >> 0;
         document.getElementById("lastUpdated").textContent = `Last updated: ${data.generatedAt}`;
         if (data.general.nth_list) {
             let generalTbody = document.getElementById('tblGeneralStats').querySelector('tbody');
             data.general.nth_list.forEach(x => {
                 if (x.res !== false) {
-                    let tr = _ce("tr"),
-                        tdName = _ce("td", `${x.pretty} pixel placed by`),
-                        tdValue = _ce("td", x.res);
+                    let tr = _ce('tr'),
+                        tdName = _ce('td', {'class': 'text-right pr-2'}, `${x.pretty} pixel:`),
+                        tdValue = _ce('td', x.res);
                     tr.appendChild(tdName);
                     tr.appendChild(tdValue);
                     generalTbody.appendChild(tr);
                 }
             });
         } else console.log('no nth_list: %o', data);
+
+        $('#tblFactions').DataTable({
+            data: data.factions,
+            columns: [
+                {data: 'fid'},
+                {data: 'Faction'},
+                {
+                    data: 'Canvas_Pixels',
+                    render: (data, i, row) => {
+                        return row.Canvas_Pixels_Pretty;
+                    }
+                },
+                {
+                    data: 'Alltime_Pixels',
+                    render: (data, i, row) => {
+                        return row.Alltime_Pixels_Pretty;
+                    }
+                },
+                {
+                    data: 'Member_Count',
+                    render: (data, i, row) => {
+                        return row.Member_Count_Pretty;
+                    }
+                }
+            ],
+            order: [[4, 'desc']]
+        });
 
         $(".card-title").addClass("pull-down").css("z-index", "9669");
         $(".gscWrapper").addClass("pulled");
@@ -132,14 +160,11 @@ $(document).ready(function() {
         {
             let table = _ce("table", {class: "table table-bordered table-striped table-hover"}),
                 thead = _ce("thead"),
-                tfoot = _ce("tfoot"),
                 tbody = _ce("tbody");
             thead.appendChild(generateTableRow(true, "Place", "Username", "Pixels"));
-            tfoot.appendChild(generateTableRow(true, "Place", "Username", "Pixels"));
 
             table.appendChild(thead);
             table.appendChild(tbody);
-            table.appendChild(tfoot);
 
             let tableOpts = {
                 data: data.users,
@@ -164,14 +189,11 @@ $(document).ready(function() {
         {
             let table = _ce("table", {class: "table table-bordered table-striped table-hover"}),
                 thead = _ce("thead"),
-                tfoot = _ce("tfoot"),
                 tbody = _ce("tbody");
             thead.appendChild(generateTableRow(true, "Place", "Color", "Count"));
-            tfoot.appendChild(generateTableRow(true, "Place", "Color", "Count"));
 
             table.appendChild(thead);
             table.appendChild(tbody);
-            table.appendChild(tfoot);
 
             (zero_based_colors => {
                 $(table).DataTable({
