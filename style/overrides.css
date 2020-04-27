@@ -57,6 +57,10 @@ th.sorting::before, th.sorting::after, th.sorting_asc::before, th.sorting_asc::a
     display: inline-block;
 }
 
+tr.self td, tr.self th {
+    background-color: #860d82 !important;
+}
+
 .breakdownContainer .breakdown:not(:first-of-type) {
     margin-top: 3em;
 }
