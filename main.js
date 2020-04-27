@@ -92,8 +92,10 @@ $(document).ready(function() {
         $('#tblFactions').DataTable({
             data: data.factions,
             columns: [
-                {data: 'fid'},
-                {data: 'Faction'},
+                {
+                    data: 'Faction',
+                    render: (data, i, row) => `<span>${data}</span><small class="d-block text-muted">(ID: ${row.fid})</small>`
+                },
                 {
                     data: 'Canvas_Pixels',
                     render: (data, i, row) => {
@@ -113,7 +115,7 @@ $(document).ready(function() {
                     }
                 }
             ],
-            order: [[4, 'desc']]
+            order: [[3, 'desc']]
         });
 
         $(".card-title").addClass("pull-down").css("z-index", "9669");
