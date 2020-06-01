@@ -34,7 +34,12 @@ $(document).ready(function() {
         console.log(data);
         var leaderboardColumns = [
             {data: "place", searchable: false},
-            {data: "username"},
+            {
+                data: "username",
+                render: (data, type, row, meta) => {
+                    return `<a href="/profile/${data}">${data}</a>`
+                }
+            },
             {data: "pixels", searchable: false}
         ];
         let rowRenderer = null;
@@ -172,7 +177,12 @@ $(document).ready(function() {
                 data: data.users,
                 columns: [
                     {data: "place", searchable: false},
-                    {data: "username"},
+                    {
+                        data: "username",
+                        render: (data, type, row, meta) => {
+                            return `<a href="/profile/${data}">${data}</a>`
+                        }
+                    },
                     {data: "pixels", searchable: false}
                 ],
                 searching: false,
