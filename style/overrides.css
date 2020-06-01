@@ -76,6 +76,10 @@ tr.self td, tr.self th {
     border: 1px solid #000;
 }
 
+table.dataTable {
+    box-sizing: border-box;
+}
+
 table.table-bordered, table.table-bordered td, table.table-bordered th {
     border-color: #000;
 }
@@ -119,10 +123,6 @@ table.table-bordered.dataTable tr:last-of-type td,table.table-bordered.dataTable
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     box-shadow: none;
     border: initial;
-}
-
-.dataTables_filter input {
-    /*background-color: #f5f5f5;*/
 }
 
 table:not(.table) tr:hover th, table:not(.table) tr:hover td { /* tables opting out of bootstrap styling. used for general stats to save screen space */
