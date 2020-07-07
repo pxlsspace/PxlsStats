@@ -39,7 +39,7 @@
                 'general' => [
                     'total_users' => $this->con->query("SELECT COUNT(id) AS total FROM users;")->fetch()['total'],
                     'total_pixels_placed' => $this->con->query("SELECT COUNT(id) AS total FROM pixels WHERE mod_action = false AND rollback_action = false AND undo_action = false AND undone = false;")->fetch()['total'],
-                    'users_active_this_canvas' => $this->con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry AND ban_expiry IS NOT NULL));")->fetch()['total'],
+                    'users_active_this_canvas' => $this->con->query("SELECT COUNT(id) AS total FROM users WHERE pixel_count>0 AND NOT (is_shadow_banned OR (now() < ban_expiry AND ban_expiry IS NOT NULL));")->fetch()['total'],
                     'total_factions' => $this->con->query("SELECT COUNT(id) AS total FROM faction;")->fetch()['total'],
                     'nth_list' => [
                         $this->generateNth(1),
@@ -85,7 +85,7 @@
             $toRet['breakdown']['lastWeek'] = $this->getBreakdownForTime(604800);
 
             echo "    Grabbing leaderboard stats...\n";
-            $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login FROM users WHERE pixel_count_alltime > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry AND ban_expiry IS NOT NULL)) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
+            $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login FROM users WHERE pixel_count_alltime > 0 AND NOT (is_shadow_banned OR (now() < ban_expiry AND ban_expiry IS NOT NULL)) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistall->fetch(\PDO::FETCH_ASSOC)) {
                 $this->filterUsernameInRow($row);
@@ -94,7 +94,7 @@
                 $toRet['toplist']['alltime'][] = $row;
             }
 
-            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (role='BANNED' OR role='SHADOWBANNED' OR (now() < ban_expiry AND ban_expiry IS NOT NULL)) ORDER BY pixel_count DESC LIMIT 1000;");
+            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (is_shadow_banned OR (now() < ban_expiry AND ban_expiry IS NOT NULL)) ORDER BY pixel_count DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistCanvas->fetch(\PDO::FETCH_ASSOC)) {
                 $this->filterUsernameInRow($row);
@@ -111,7 +111,7 @@
         }
 
         private function getBreakdownForTime($time) {
-            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE p.time BETWEEN (current_timestamp - interval '".$time." seconds') AND (current_timestamp) AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (u.role='BANNED' OR u.role='SHADOWBANNED' OR (now() < u.ban_expiry AND u.ban_expiry IS NOT NULL));");
+            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE p.time BETWEEN (current_timestamp - interval '".$time." seconds') AND (current_timestamp) AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (is_shadow_banned OR (now() < u.ban_expiry AND u.ban_expiry IS NOT NULL));");
             $bdTemp = [
                 'colors' => [],
                 'users' => [],
@@ -183,7 +183,9 @@
         private function grabNthPixel($Nth) {
             $query = $this->con->query("SELECT * FROM pixels WHERE mod_action=false AND rollback_action=false AND undo_action=false AND undone=false ORDER BY id LIMIT 1 OFFSET $Nth;");
             if (!$query) return false;
-            return $this->getUsernameFromID($query->fetch()['who']);
+            $pixel = $query->fetch();
+            if (!$pixel) return false;
+            return $this->getUsernameFromID($pixel['who']);
         }
 
         private function getUsernameFromID($id) {
