@@ -103,21 +103,15 @@ $(document).ready(function() {
                 },
                 {
                     data: 'Canvas_Pixels',
-                    render: (data, i, row) => {
-                        return row.Canvas_Pixels_Pretty;
-                    }
+                    render: (data, i, row) => row.Canvas_Pixels.toLocaleString()
                 },
                 {
                     data: 'Alltime_Pixels',
-                    render: (data, i, row) => {
-                        return row.Alltime_Pixels_Pretty;
-                    }
+                    render: (data, i, row) => row.Alltime_Pixels.toLocaleString()
                 },
                 {
                     data: 'Member_Count',
-                    render: (data, i, row) => {
-                        return row.Member_Count_Pretty;
-                    }
+                    render: (data, i, row) => row.Member_Count.toLocaleString()
                 }
             ],
             order: [[3, 'desc']]
