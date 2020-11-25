@@ -40,7 +40,11 @@ $(document).ready(function() {
                     return `<a href="/profile/${data}">${data}</a>`
                 }
             },
-            {data: "pixels", searchable: false}
+            {
+                data: "pixels",
+                searchable: false,
+                render: (data, type, row) => row.pixels.toLocaleString()
+            }
         ];
         let rowRenderer = null;
         if (data.authData && data.authData.id !== -1) {
@@ -177,7 +181,11 @@ $(document).ready(function() {
                             return `<a href="/profile/${data}">${data}</a>`
                         }
                     },
-                    {data: "pixels", searchable: false}
+                    {
+                        data: "pixels",
+                        searchable: false,
+                        render: (data, type, row) => row.pixels.toLocaleString()
+                    }
                 ],
                 searching: false,
                 paging: false
