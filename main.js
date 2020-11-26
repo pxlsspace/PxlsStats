@@ -1,4 +1,14 @@
 $(document).ready(function() {
+    function makeNumberRenderer(key) {
+        return (data, type, row) => {
+            const val = row[key];
+            if (type !== 'display') {
+                return val;
+            }
+            return val.toLocaleString();
+        }
+    }
+
     $.get("stats.json", statsData => {
         try {
             if (typeof statsData === "string") {
@@ -43,7 +53,7 @@ $(document).ready(function() {
             {
                 data: "pixels",
                 searchable: false,
-                render: (data, type, row) => row.pixels.toLocaleString()
+                render: makeNumberRenderer('pixels')
             }
         ];
         let rowRenderer = null;
@@ -103,19 +113,16 @@ $(document).ready(function() {
             columns: [
                 {
                     data: 'Faction',
-                    render: (data, i, row) => `<span>${data}</span><small class="d-block text-muted">(ID: ${row.fid})</small>`
+                    render: (data, type, row) => `<span>${data}</span><small class="d-block text-muted">(ID: ${row.fid})</small>`
                 },
                 {
-                    data: 'Canvas_Pixels',
-                    render: (data, i, row) => row.Canvas_Pixels.toLocaleString()
+                    render: makeNumberRenderer('Canvas_Pixels')
                 },
                 {
-                    data: 'Alltime_Pixels',
-                    render: (data, i, row) => row.Alltime_Pixels.toLocaleString()
+                    render: makeNumberRenderer('Alltime_Pixels')
                 },
                 {
-                    data: 'Member_Count',
-                    render: (data, i, row) => row.Member_Count.toLocaleString()
+                    render: makeNumberRenderer('Member_Count')
                 }
             ],
             order: [[3, 'desc']]
@@ -184,7 +191,7 @@ $(document).ready(function() {
                     {
                         data: "pixels",
                         searchable: false,
-                        render: (data, type, row) => row.pixels.toLocaleString()
+                        render: makeNumberRenderer('pixels')
                     }
                 ],
                 searching: false,
