@@ -75,7 +75,7 @@
                     'alltime' => [],
                     'canvas' => []
                 ],
-                'factions' => $this->con->query("select f.id as \"fid\",f.name as \"Faction\",ltrim(to_char(z.canvas_pixels, '9,999,999')) as \"Canvas_Pixels_Pretty\", z.canvas_pixels as \"Canvas_Pixels\",ltrim(to_char(z.alltime_pixels, '9,999,999')) as \"Alltime_Pixels_Pretty\", z.alltime_pixels as \"Alltime_Pixels\",ltrim(to_char(z.member_count, '9,999,999')) as \"Member_Count_Pretty\", z.member_count as \"Member_Count\" from (select fm.fid as \"fid\",sum(u.pixel_count) as \"canvas_pixels\", sum(u.pixel_count_alltime) as \"alltime_pixels\", count(fm.uid) as \"member_count\" from faction_membership fm inner join users u on fm.uid=u.id group by fm.fid) z inner join faction f on f.id=z.fid order by z.fid limit 1000;")->fetchAll(\PDO::FETCH_ASSOC),
+                'factions' => $this->con->query("select f.id as \"fid\",f.name as \"Faction\", z.canvas_pixels as \"Canvas_Pixels\", z.alltime_pixels as \"Alltime_Pixels\", z.member_count as \"Member_Count\" from (select fm.fid as \"fid\",sum(u.pixel_count) as \"canvas_pixels\", sum(u.pixel_count_alltime) as \"alltime_pixels\", count(fm.uid) as \"member_count\" from faction_membership fm inner join users u on fm.uid=u.id group by fm.fid) z inner join faction f on f.id=z.fid order by z.fid limit 1000;")->fetchAll(\PDO::FETCH_ASSOC),
                 'board_info' => $boardInfo,
             ];
             echo "    Grabbing breakdown stats...\n";

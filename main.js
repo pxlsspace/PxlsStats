@@ -40,7 +40,11 @@ $(document).ready(function() {
                     return `<a href="/profile/${data}">${data}</a>`
                 }
             },
-            {data: "pixels", searchable: false}
+            {
+                data: "pixels",
+                searchable: false,
+                render: (data, type, row) => row.pixels.toLocaleString()
+            }
         ];
         let rowRenderer = null;
         if (data.authData && data.authData.id !== -1) {
@@ -103,21 +107,15 @@ $(document).ready(function() {
                 },
                 {
                     data: 'Canvas_Pixels',
-                    render: (data, i, row) => {
-                        return row.Canvas_Pixels_Pretty;
-                    }
+                    render: (data, i, row) => row.Canvas_Pixels.toLocaleString()
                 },
                 {
                     data: 'Alltime_Pixels',
-                    render: (data, i, row) => {
-                        return row.Alltime_Pixels_Pretty;
-                    }
+                    render: (data, i, row) => row.Alltime_Pixels.toLocaleString()
                 },
                 {
                     data: 'Member_Count',
-                    render: (data, i, row) => {
-                        return row.Member_Count_Pretty;
-                    }
+                    render: (data, i, row) => row.Member_Count.toLocaleString()
                 }
             ],
             order: [[3, 'desc']]
@@ -183,7 +181,11 @@ $(document).ready(function() {
                             return `<a href="/profile/${data}">${data}</a>`
                         }
                     },
-                    {data: "pixels", searchable: false}
+                    {
+                        data: "pixels",
+                        searchable: false,
+                        render: (data, type, row) => row.pixels.toLocaleString()
+                    }
                 ],
                 searching: false,
                 paging: false
