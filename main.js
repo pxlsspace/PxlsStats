@@ -223,7 +223,7 @@ $(document).ready(function() {
                         {data: "place"},
                         {
                             data: "colorID", render: function(renderData, type, row, meta) {
-                                return `<div class="pixelColor" style="background-color:${board_info.palette[renderData]}"></div> ${renderData + (zero_based_colors ? 0 : 1)}`;
+                                return `<div class="pixelColor" style="background-color:#${board_info.palette[renderData].value}"></div> ${renderData + (zero_based_colors ? 0 : 1)}`;
                             }
                         },
                         {data: "count"}
