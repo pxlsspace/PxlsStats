@@ -2,16 +2,18 @@
     include(dirname(__FILE__).'/config.php');
     date_default_timezone_set('Europe/Berlin');
 
-    $stats = new Stats($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_DATABASE);
+    $stats = new Stats($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_DATABASE, $INSTANCE_URL);
     file_put_contents(dirname(__FILE__).'/stats.json', json_encode($stats->getStats()));
 
     class Stats {
         private $con;
+        private $instanceURL;
 
-        public function __construct($dbHost, $dbUser, $dbPassword, $dbDatabase) {
+        public function __construct($dbHost, $dbUser, $dbPassword, $dbDatabase, $instanceURL) {
             $con_str = "pgsql:host=$dbHost dbname=$dbDatabase";
             $this->con = new PDO($con_str, $dbUser, $dbPassword);
             if (!$this->con) throw new Error('Failed to connect to the MySQL Database');
+            $this->instanceURL = $instanceURL;
         }
 
         public function __destruct() {
@@ -27,7 +29,7 @@
             echo "    Caching board info\n";
             $boardInfo = [];
             try {
-                $tempBoardInfo = json_decode(file_get_contents('https://pxls.space/info'));
+                $tempBoardInfo = json_decode(file_get_contents($this->instanceURL . '/info'));
                 $boardInfo = [
                     'width' => $tempBoardInfo->width,
                     'height' => $tempBoardInfo->height,

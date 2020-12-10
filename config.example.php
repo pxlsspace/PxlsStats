@@ -3,3 +3,4 @@
     $DB_USER = "username";
     $DB_PASSWORD = "password";
     $DB_DATABASE = "pxls";
+    $INSTANCE_URL = "https://pxls.space";
