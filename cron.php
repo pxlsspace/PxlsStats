@@ -87,7 +87,7 @@
             $toRet['breakdown']['lastWeek'] = $this->getBreakdownForTime(604800);
 
             echo "    Grabbing leaderboard stats...\n";
-            $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login FROM users WHERE pixel_count_alltime > 0 AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now()))) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
+            $qToplistall = $this->con->query("SELECT username, pixel_count_alltime AS pixels, login_with_ip FROM users WHERE pixel_count_alltime > 0 AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now()))) ORDER BY pixel_count_alltime DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistall->fetch(\PDO::FETCH_ASSOC)) {
                 $this->filterUsernameInRow($row);
@@ -96,7 +96,7 @@
                 $toRet['toplist']['alltime'][] = $row;
             }
 
-            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login FROM users WHERE pixel_count > 0 AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now()))) ORDER BY pixel_count DESC LIMIT 1000;");
+            $qToplistCanvas = $this->con->query("SELECT username, pixel_count AS pixels, login_with_ip FROM users WHERE pixel_count > 0 AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now()))) ORDER BY pixel_count DESC LIMIT 1000;");
             $i = 1;
             while($row = $qToplistCanvas->fetch(\PDO::FETCH_ASSOC)) {
                 $this->filterUsernameInRow($row);
@@ -113,7 +113,7 @@
         }
 
         private function getBreakdownForTime($time) {
-            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login as \"login\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE p.time BETWEEN (current_timestamp - interval '".$time." seconds') AND (current_timestamp) AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now())));");
+            $query = $this->con->query("SELECT p.x,p.y,p.color,p.who AS \"uid\", u.username AS \"username\", u.login_with_ip as \"login_with_ip\" FROM pixels p INNER JOIN users u ON p.who=u.id WHERE p.time BETWEEN (current_timestamp - interval '".$time." seconds') AND (current_timestamp) AND NOT p.undone AND NOT p.undo_action AND NOT p.mod_action AND NOT p.rollback_action AND NOT (is_shadow_banned OR (ban_expiry IS NOT NULL AND (ban_expiry <= to_timestamp(0) OR ban_expiry >= now())));");
             $bdTemp = [
                 'colors' => [],
                 'users' => [],
@@ -123,7 +123,7 @@
             while ($row = $query->fetch()) {
                 if (!array_key_exists($row['username'], $bdTemp['users'])) {
                     $bdTemp['users'][$row['username']] = 0;
-                    $bdTemp['loginMap'][$row['username']] = $row['login'];
+                    $bdTemp['loginMap'][$row['username']] = $row['login_with_ip'];
                 }
                 if (!array_key_exists($row['color'], $bdTemp['colors'])) {
                     $bdTemp['colors'][$row['color']] = 0;
@@ -136,7 +136,7 @@
             $users = [];
             $i = 1;
             foreach (array_slice($bdTemp['users'], 0, 10, true) as $key => $value) {
-                if (substr($bdTemp['loginMap'][$key], 0, 2) == 'ip') {
+                if ($bdTemp['loginMap'][$key]) {
                     $key = '-snip-';
                 }
                 $users[] = [
@@ -194,22 +194,22 @@
             if (empty($id)) {
                 return false;
             }
-            $row = $this->con->query("SELECT username,login FROM users WHERE id=$id LIMIT 1;");
+            $row = $this->con->query("SELECT username, login_with_ip FROM users WHERE id=$id LIMIT 1;");
             if (!$row) return false;
             $row = $row->fetch();
-            if (substr($row['login'], 0, 2) == 'ip') {
+            if ($row['login_with_ip']) {
                 $row['username'] = '-snip-';
             }
             return $row['username'];
         }
 
         private function filterUsernameInRow(&$row) {
-            if (isset($row['login'])) {
-                if (substr($row['login'], 0, 2) == 'ip') {
+            if (isset($row['login_with_ip'])) {
+                if ($row['login_with_ip']) {
                     $row['username'] = '-snip-';
                 }
-                $row['login'] = null;
-                unset($row['login']);
+                $row['login_with_ip'] = null;
+                unset($row['login_with_ip']);
             }
         }
     }
