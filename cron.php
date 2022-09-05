@@ -77,7 +77,7 @@
                     'alltime' => [],
                     'canvas' => []
                 ],
-                'factions' => $this->con->query("select f.id as \"fid\",f.name as \"Faction\", z.canvas_pixels as \"Canvas_Pixels\", z.alltime_pixels as \"Alltime_Pixels\", z.member_count as \"Member_Count\" from (select fm.fid as \"fid\",sum(u.pixel_count) as \"canvas_pixels\", sum(u.pixel_count_alltime) as \"alltime_pixels\", count(fm.uid) as \"member_count\" from faction_membership fm inner join users u on fm.uid=u.id group by fm.fid) z inner join faction f on f.id=z.fid order by z.fid limit 1000;")->fetchAll(\PDO::FETCH_ASSOC),
+                'factions' => $this->con->query("select f.id as \"fid\",f.name as \"Faction\", z.canvas_pixels as \"Canvas_Pixels\", z.alltime_pixels as \"Alltime_Pixels\", z.member_count as \"Member_Count\" from (select fm.fid as \"fid\",sum(u.pixel_count) as \"canvas_pixels\", sum(u.pixel_count_alltime) as \"alltime_pixels\", count(fm.uid) as \"member_count\" from faction_membership fm inner join users u on fm.uid=u.id group by fm.fid) z inner join faction f on f.id=z.fid order by z.canvas_pixels desc, z.alltime_pixels desc, z.fid limit 1000;")->fetchAll(\PDO::FETCH_ASSOC),
                 'board_info' => $boardInfo,
             ];
             echo "    Grabbing breakdown stats...\n";
