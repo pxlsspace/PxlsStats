@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="style/theme-purple.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="style/overrides.css"/>
   </head>
   <body>
@@ -17,13 +18,13 @@
           <a href="/" class="nav-link">Pxls</a>
         </li>
         <li class="nav-item active">
-          <a class="nav-link" href="/stats">Stats</a>
+          <a class="nav-link" href="/stats"><i class="fa fa-line-chart" aria-hidden="true"></i> Stats</a>
         </li>
       </ul>
     </nav>
     <main role="main" class="container px-0 py-3">
       <div class="container card pb-0 mb-3">
-        <h2 class="mt-1 mb-0">General Stats</h2>
+        <h2 class="mt-1 mb-0"><i class="fa fa-area-chart" aria-hidden="true"></i> General Stats</h2>
         <small class="text-muted m-0 p-0" id="lastUpdated">Last updated: <em class="gscLoading">(still loading)</em></small>
         <hr/>
         <div class="card-body py-0">
@@ -50,7 +51,7 @@
         </div>
       </div>
       <div class="container card mb-3">
-        <h2>Leaderboard (users)</h2>
+        <h2><i class="fa fa-user" aria-hidden="true"></i> Leaderboard (users)</h2>
         <hr/>
         <div class="row">
           <div class="col-md-6">
@@ -90,7 +91,7 @@
         </div>
       </div>
       <div class="container card mb-3">
-        <h2 class="mt-1 mb-0">Factions</h2>
+        <h2 class="mt-1 mb-0"><i class="fa fa-users" aria-hidden="true"></i> Factions</h2>
         <small class="gscLoading text-muted">(LOADING)</small>
         <hr>
         <div class="row">
@@ -110,7 +111,7 @@
         </div>
       </div>
       <div class="container card mb-3 breakdownContainer" id="breakdowns">
-        <h2 class="mt-1 mb-0">TimeSlice Breakdowns</h2>
+        <h2 class="mt-1 mb-0"><i class="fa fa-clock-o" aria-hidden="true"></i> TimeSlice Breakdowns</h2>
         <small class="text-muted">Note: These are rolling stats so 'last day' means literally 24 hours ago, not from midnight. In 15 minutes, the stats may be different.</small>
         <hr/>
       </div>
