@@ -103,6 +103,7 @@ $(document).ready(function() {
                         tdValue = _ce('td', x.res);
                     tr.appendChild(tdName);
                     tr.appendChild(tdValue);
+                    if (data.authData && data.authData.username === x.res) tr.className = "self";
                     generalTbody.appendChild(tr);
                 }
             });
